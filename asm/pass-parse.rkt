@@ -28,6 +28,28 @@
   (match asm
     ;; Handle blank lines.
     [(regexp "^\\s*$") 'blank-line]
-    ;; If all else fails, emit a parse bogon.
+     [(regexp  LABEL-REGEXP)
+      (label 'no-line (label->symbol asm))]
+    [(regexp DCJ-REGEXP) 
+     (C 'no-line (extract-dest asm) (extract-comp asm) (extract-jump asm))]
+    [(regexp CJ-REGEXP) 
+     (C 'no-line 'no-dest (extract-comp asm) (extract-jump asm))]
+    [(regexp DC-REGEXP) 
+      (C 'no-line (extract-dest asm) (extract-comp asm) 'no-jump)]
+    [(regexp C-REGEXP) 
+      (C 'no-line 'no-dest (extract-comp asm) 'no-jump)]
+    [(regexp ANUM-REGEXP) 
+      (A 'no-line (@inst->number asm))]
+    [(regexp ASYM-REGEXP) 
+      (A 'no-line (@inst->symbol asm))]   
     [else 'parse-bogon]
     ))
+
+
+;; CONTRACT
+;; label->symbol :: string -> symbol
+;; PURPOSE
+;; Takes a label and returns the symbol
+;; that it contains.
+(define (label->symbol asm)
+  (string->number-or-symbol (second (regexp-match LABEL-REGEXP asm))))

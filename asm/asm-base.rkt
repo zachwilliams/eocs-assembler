@@ -13,13 +13,13 @@
   #:inspector (make-inspector))
 
 ;; Regular expressions
-(define DCJ-REGEXP #rx"")
-(define CJ-REGEXP #rx"")
-(define DC-REGEXP #rx"")
-(define C-REGEXP #rx"")
-(define ANUM-REGEXP #rx"")
-(define ASYM-REGEXP #rx"")
-(define LABEL-REGEXP #rx"")
+(define DCJ-REGEXP #rx"^(.+)=(.+);(.+)$")
+(define CJ-REGEXP #rx"^(.+);(.+)$")
+(define DC-REGEXP #rx"^(.+)=(.+)$")
+(define C-REGEXP #rx"^(.+)$")
+(define ANUM-REGEXP #rx"^([0-9]+)$")
+(define ASYM-REGEXP #rx"^([A-Za-z]+[0-9]*[A-Za-z]*)$")
+(define LABEL-REGEXP #rx"^\\((.+)\\)$")
 
 ;; Macros
 (define-syntax (each-with stx)
