@@ -36,7 +36,7 @@
 ;; instruction with the instruction with the address inserted
 ;; into the addr field.
 (define (attach-to-a instr addr)
-  '...
+  (A addr (A-value instr))
   )
 
 ;; CONTRACT
@@ -46,7 +46,7 @@
 ;; instruction with the instruction with the address inserted
 ;; into the addr field.
 (define (attach-to-c instr addr)
-  '...
+  (C addr (C-dest instr) (C-comp instr) (C-jump instr))
   )
 
 ;; CONTRACT
@@ -56,7 +56,7 @@
 ;; instruction with the instruction with the address inserted
 ;; into the addr field.
 (define (attach-to-label instr addr)
-  '...
+  (label addr (label-name instr))
   )
 
 ;; CONTRACT
