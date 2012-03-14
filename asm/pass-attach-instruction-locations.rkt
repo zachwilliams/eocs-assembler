@@ -67,12 +67,17 @@
 ;; to each instruction.
 (define (ail loi addr)
   (cond
-    ;; You get the empty case for free.
-    [(empty? loi) '()]    
-    ;; Handle A, C, and label instructions
-    ;; You should not need an 'else' case.
-    ;; It only exists for tests.
-    [else '...]
+    [(empty? loi) '()]
+    [(A? (first loi)) 
+     (cons (attach-to-a (first loi) addr) 
+           (ail (rest loi) (add1 addr)))]
+    [(C? (first loi)) 
+     (cons (attach-to-c (first loi) addr) 
+           (ail (rest loi) (add1 addr)))]
+    [(label? (first loi)) 
+     (cons (attach-to-label (first loi) addr) 
+           (ail (rest loi) addr))]
+    [else 'failure]
     ))
 
 ;; CONTRACT
