@@ -21,6 +21,9 @@
 (define ASYM-REGEXP #rx"@([A-Za-z]+[0-9]*[A-Za-z]*)")
 (define LABEL-REGEXP #rx"\\((.+)\\)")
 
+;; Start of memory for symbolic references
+(define START-ADDRESS 16)
+
 ;; Macros
 (define-syntax (each-with stx)
   (syntax-case stx ()

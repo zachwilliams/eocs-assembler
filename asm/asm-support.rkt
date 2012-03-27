@@ -12,6 +12,7 @@
          number->15bit
          
          sym
+         snoc
          
          ;; Random bits
          ;; Exported for testing only.
@@ -85,6 +86,12 @@
                      v
                      (expt 2 15)))))
 
+;; CONTRACT
+;; snoc :: item list -> list
+;; PURPOSE
+;; Just like cons, but attaches to the end of the list.
+(define (snoc i ls)
+  (reverse (cons i (reverse ls))))
 
 ;; CONTRACT
 ;; extract-comp :: string -> symbol
