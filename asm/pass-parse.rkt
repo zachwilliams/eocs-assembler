@@ -28,8 +28,12 @@
   (match asm
     ;; Handle blank lines.
     [(regexp "^\\s*$") 'blank-line]
-     [(regexp  LABEL-REGEXP)
+    [(regexp  LABEL-REGEXP)
       (label 'no-line (label->symbol asm))]
+    [(regexp ANUM-REGEXP) 
+      (A 'no-line (@inst->number asm))]
+    [(regexp ASYM-REGEXP) 
+      (A 'no-line (@inst->symbol asm))]   
     [(regexp DCJ-REGEXP) 
      (C 'no-line (extract-dest asm) (extract-comp asm) (extract-jump asm))]
     [(regexp CJ-REGEXP) 
@@ -38,10 +42,6 @@
       (C 'no-line (extract-dest asm) (extract-comp asm) 'no-jump)]
     [(regexp C-REGEXP) 
       (C 'no-line 'no-dest (extract-comp asm) 'no-jump)]
-    [(regexp ANUM-REGEXP) 
-      (A 'no-line (@inst->number asm))]
-    [(regexp ASYM-REGEXP) 
-      (A 'no-line (@inst->symbol asm))]   
     [else 'parse-bogon]
     ))
 

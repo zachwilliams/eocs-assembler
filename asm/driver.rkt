@@ -28,13 +28,13 @@
    ;; Then parse
    [parsed (parse list-of-strings)]
    ;; Now, attach instruction locations
-   [numbered (attach-instruction-locations parsed 0)]
+   [numbered (attach-instruction-locations parsed)]
    ;; Init table
    [x (init-symbol-table)]
    ;; Add labels
    [x1 (add-labels-to-table numbered)]
    ;; Add memory locations
-   [assigned (add-memory-addresses-to-table numbered)]
+   [assigned (add-memory-addresses-to-table numbered 15)]
    ;; Assign addresses to everything
    [no-labels (rewrite-with-addresses assigned)]
    ;; Convert structures to binary
@@ -42,3 +42,17 @@
    ;; Write the file
    [x3 (write-file! file zeroones)]
    [final numbered]))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;
+
+(define list-of-strings (file->list-of-strings "test.asm"))
+(define parsed (parse list-of-strings))
+(define numbered (attach-instruction-locations parsed))
+(define x (init-symbol-table))
+(define x1 (add-labels-to-table numbered))
+(define assigned (add-memory-addresses-to-table numbered 15))
+(define no-labels (rewrite-with-addresses numbered))
+(define zeroones (map structure->binary no-labels))
+;(define x3 (write-file! file zeroones))

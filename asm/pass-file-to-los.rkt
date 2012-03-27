@@ -10,7 +10,7 @@
 (define (strip line)
   (for-each (λ (pat)
               (set! line (regexp-replace* pat line "")))
-            (list "\n" "\r" " " "//.*"))
+            (list "\n" "\r" " " "//.*" "^\\s*$"))
   line)
 
 ;; CONTRACT

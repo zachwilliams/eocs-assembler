@@ -105,4 +105,12 @@
 ;; HINT
 ;; Should probably use string-append and the functions above.
 (define (structure->binary ast)
-  '...)
+  (cond
+    [(C? ast)
+    (string-append 
+     (string-append (a-bit ast) (c-bits ast))
+     (string-append (d-bits ast) (j-bits ast)))]
+    [(A? ast)
+     (string-append (a-bit ast) (number->15bit (A-value ast)))]
+    [else 'failure]))
+

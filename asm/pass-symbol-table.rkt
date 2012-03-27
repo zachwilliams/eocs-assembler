@@ -5,6 +5,7 @@
 
 (provide init-symbol-table
          add-labels-to-table
+         rewrite-with-addresses
          add-memory-addresses-to-table
          )
 
@@ -69,15 +70,14 @@
 ;; that a label should not cause the address to go up, as 
 ;; labels will ultimately be removed. Return the list of instructions
 ;; as-is.
-(define (add-labels-to-table loi addr)
+(define (add-labels-to-table loi)
   (cond
-    ;; We don't care what comes 
-    ;; back in the empty case.
     [(empty? loi) '()]
-    ;; Handle labels
-    [(label? (first loi)) '...]
-    ;; Pass everything else through unscathed
-    [else '...]))
+    [(label? (first loi)) 
+     (table-add! (label-name (first loi)) 
+                 (label-addr (first loi)))
+     (add-labels-to-table (rest loi))]
+    [else (add-labels-to-table (rest loi))]))
 
 
 ;; CONTRACT
@@ -90,11 +90,20 @@
 ;; instructions that have a value field that is symbolic.
 ;;
 ;; Rebuild the list of instructions as you go.
-(define (add-memory-addresses-to-table loi next-mem)
+(define (add-memory-addresses-to-table loi mem)
   (cond
     [(empty? loi) '()]
-    ;; ...
-    ))
+    [(A? (first loi)) 
+     (cond
+       [(in-table? (A-value (first loi)))
+        (add-memory-addresses-to-table (rest loi) mem)]
+       [(symbol? (A-value (first loi)))
+        (table-add! (A-value (first loi)) mem) 
+        (add-memory-addresses-to-table (rest loi) (+ 1 mem))]
+       [else ;; the a instruction is a number
+        (add-memory-addresses-to-table (rest loi) mem)])]
+    [else ;c instruction or label
+     (add-memory-addresses-to-table (rest loi) mem)]))
 
 ;; CONTRACT
 ;; rewrite-with-addresses :: (list-of instructions) -> (list-of instructions)
@@ -102,4 +111,46 @@
 ;; Takes a list of instructions and rewrites the instruction stream
 ;; so that no symbolic references remain. 
 (define (rewrite-with-addresses loi)
-  '...)
+  (cond
+    [(empty? loi) '()]
+    [(label? (first loi))
+     (rewrite-with-addresses (rest loi))]
+    [(A? (first loi))
+     (cond 
+        [(in-table? (A-value (first loi))) 
+         (cons 
+          (A (A-addr (first loi)) (table-lookup (A-value (first loi))))
+          (rewrite-with-addresses (rest loi)))] 
+        [else ;; the a instruction is a number 
+         (cons (first loi) (rewrite-with-addresses (rest loi)))])]
+    [else ;c instruction or label  
+     (cons (first loi) (rewrite-with-addresses (rest loi)))]))
+
+;;;;;;;;;;;;;;;;;;;;;;
+;;    for testing   ;;
+;;;;;;;;;;;;;;;;;;;;;;
+(define loi (list
+   (label 0 'label0)
+   (C 0 'D1 'C2 'J3)
+   (A 1 0)
+   (label 2 'label4)
+   (label 2 'label5)
+   (label 2 'label6)
+   (label 2 'label7)
+   (label 2 'label8)
+   (C 2 'D9 'C10 'J11)
+   (C 3 'D12 'C13 'J14)
+   (A 4 'next)
+   (C 5 'D15 'C16 'J17)
+   (C 6 'D18 'C19 'J20)
+   (A 7 'label5)
+   (C 8 'D21 'C22 'J23)
+   (A 9 22)
+   (C 10 'D24 'C25 'J26)))
+
+
+(add-labels-to-table loi)
+(add-memory-addresses-to-table loi 10)
+(rewrite-with-addresses loi)
+
+

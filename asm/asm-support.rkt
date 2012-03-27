@@ -9,6 +9,8 @@
          @inst->symbol
          @inst->number
          
+         number->15bit
+         
          sym
          
          ;; Random bits

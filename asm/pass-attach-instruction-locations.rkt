@@ -77,7 +77,7 @@
     [(label? (first loi)) 
      (cons (attach-to-label (first loi) addr) 
            (ail (rest loi) addr))]
-    [else 'failure]
+    [else 'ail_failure]
     ))
 
 ;; CONTRACT
